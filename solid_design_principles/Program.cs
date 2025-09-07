@@ -10,6 +10,21 @@ class Program
         // 2. Open/Closed Principle (OCP) example
         Execute_Ocp();
 
+        // 3. Liskov Substitution Principle (LSP) example
+        Execute_Lsp();
+
+    }
+
+    private static void Execute_Lsp()
+    {
+        solid_design_principles.lsp.Rectangle rc = new solid_design_principles.lsp.Rectangle(2, 3);
+        Console.WriteLine(rc);
+        Console.WriteLine($"Area: {solid_design_principles.lsp.Area.Calculate(rc)}");
+
+        solid_design_principles.lsp.Square sq = new solid_design_principles.lsp.Square(3);
+        sq.Width = 4;
+        Console.WriteLine(sq);
+        Console.WriteLine($"Area: {solid_design_principles.lsp.Area.Calculate(sq)}");
     }
 
     private static void Execute_Ocp()
@@ -56,7 +71,7 @@ class Program
         journal.AddEntry("I ate a bug.");
         Console.WriteLine(journal);
 
-        var persistence = new srp.Persistence(journal);
+        var persistence = new srp.Persistence();
         var filename = "journal.txt";
         persistence.SaveToFile(journal, filename);
 
