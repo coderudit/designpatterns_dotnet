@@ -15,6 +15,14 @@ class Program
 
     }
 
+    private static void Execute_Dip()
+    {
+        var paypalProcessor = new dip.PaymentProcessor(new dip.PayPalGateway());
+        paypalProcessor.Pay(100);
+
+        var stripeProcessor = new dip.PaymentProcessor(new dip.StripeGateway());
+        stripeProcessor.Pay(200);
+    }
     private static void Execute_Lsp()
     {
         solid_design_principles.lsp.Rectangle rc = new solid_design_principles.lsp.Rectangle(2, 3);
