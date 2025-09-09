@@ -1,5 +1,11 @@
 ﻿namespace solid_design_principles;
 
+using solid_design_principles.srp;
+using solid_design_principles.ocp;
+using solid_design_principles.lsp;
+using solid_design_principles.isp;
+using solid_design_principles.dip;
+
 class Program
 {
     static void Main(string[] args)
@@ -13,58 +19,59 @@ class Program
         // 3. Liskov Substitution Principle (LSP) example
         Execute_Lsp();
 
+        // 4. Interface Segregation Principle (ISP) example
+        Execute_Isp();
+
+        // 5. Dependency Inversion Principle (DIP) example
+        Execute_Dip();
     }
 
-    private static void Execute_Dip()
+    private static void Execute_Srp()
     {
-        var paypalProcessor = new dip.PaymentProcessor(new dip.PayPalGateway());
-        paypalProcessor.Pay(100);
+        var journal = new Journal();
+        journal.AddEntry("I cried today.");
+        journal.AddEntry("I ate a bug.");
+        Console.WriteLine(journal);
 
-        var stripeProcessor = new dip.PaymentProcessor(new dip.StripeGateway());
-        stripeProcessor.Pay(200);
-    }
-    private static void Execute_Lsp()
-    {
-        solid_design_principles.lsp.Rectangle rc = new solid_design_principles.lsp.Rectangle(2, 3);
-        Console.WriteLine(rc);
-        Console.WriteLine($"Area: {solid_design_principles.lsp.Area.Calculate(rc)}");
+        var persistence = new Persistence();
+        var filename = "journal.txt";
+        persistence.SaveToFile(journal, filename);
 
-        solid_design_principles.lsp.Square sq = new solid_design_principles.lsp.Square(3);
-        sq.Width = 4;
-        Console.WriteLine(sq);
-        Console.WriteLine($"Area: {solid_design_principles.lsp.Area.Calculate(sq)}");
+        var loadedJournal = new Journal();
+        persistence.LoadFromFile(loadedJournal, filename);
+        Console.WriteLine("Loaded Journal:" + Environment.NewLine + loadedJournal);
     }
 
     private static void Execute_Ocp()
     {
-        var apple = new ocp.Product("Apple", ocp.Color.Red, ocp.Size.Small);
-        var tree = new ocp.Product("Tree", ocp.Color.Green, ocp.Size.Large);
-        var house = new ocp.Product("House", ocp.Color.Blue, ocp.Size.Medium);
+        var apple = new Product("Apple", Color.Red, Size.Small);
+        var tree = new Product("Tree", Color.Green, Size.Large);
+        var house = new Product("House", Color.Blue, Size.Medium);
 
-        var products = new List<ocp.Product> { apple, tree, house };
+        var products = new List<Product> { apple, tree, house };
         Console.WriteLine("Green products (old):");
-        foreach (var p in ocp.ProductFilter.FilterByColor(products, ocp.Color.Green))
+        foreach (var p in ProductFilter.FilterByColor(products, Color.Green))
         {
             Console.WriteLine($" - {p.Name} is green");
         }
 
-        var productFilter2 = new ocp.ProductFilter2();
+        var productFilter2 = new ProductFilter2();
         Console.WriteLine("Green products (new):");
-        foreach (var p in productFilter2.Filter(products, new ocp.ColorSpecification(ocp.Color.Green)))
+        foreach (var p in productFilter2.Filter(products, new ColorSpecification(Color.Green)))
         {
             Console.WriteLine($" - {p.Name} is green");
         }
 
         Console.WriteLine("Large products:");
-        foreach (var p in productFilter2.Filter(products, new ocp.SizeSpecification(ocp.Size.Large)))
+        foreach (var p in productFilter2.Filter(products, new SizeSpecification(Size.Large)))
         {
             Console.WriteLine($" - {p.Name} is large");
         }
 
         Console.WriteLine("Large blue items:");
-        var largeBlueSpec = new ocp.AndSpecification<ocp.Product>(
-            new ocp.ColorSpecification(ocp.Color.Blue),
-            new ocp.SizeSpecification(ocp.Size.Large)
+        var largeBlueSpec = new AndSpecification<Product>(
+            new ColorSpecification(Color.Blue),
+            new SizeSpecification(Size.Large)
         );
         foreach (var p in productFilter2.Filter(products, largeBlueSpec))
         {
@@ -72,19 +79,32 @@ class Program
         }
     }
 
-    private static void Execute_Srp()
+    private static void Execute_Lsp()
     {
-        var journal = new srp.Journal();
-        journal.AddEntry("I cried today.");
-        journal.AddEntry("I ate a bug.");
-        Console.WriteLine(journal);
+        Bird sparrow = new Sparrow();
+        sparrow.Eat();
+        ((IFlyingBird)sparrow).Fly();
 
-        var persistence = new srp.Persistence();
-        var filename = "journal.txt";
-        persistence.SaveToFile(journal, filename);
+        Bird ostrich = new Ostrich();
+        ostrich.Eat();
+        // ostrich.Fly(); // This would be a compile-time error, adhering to LSP
+    }
 
-        var loadedJournal = new srp.Journal();
-        persistence.LoadFromFile(loadedJournal, filename);
-        Console.WriteLine("Loaded Journal:" + Environment.NewLine + loadedJournal);
+    private static void Execute_Isp()
+    {
+        var fullTimeEmployee = new FullTimeEmployee(5000);
+        Console.WriteLine($"Full-time Employee Monthly Salary: {fullTimeEmployee.CalculateMonthlySalary()}");
+
+        var partTimeEmployee = new ContractEmployee(20, 80);
+        Console.WriteLine($"Part-time Employee Hourly Salary: {partTimeEmployee.CalculateHourlySalary()}");
+    }
+
+    private static void Execute_Dip()
+    {
+        var paypalProcessor = new PaymentProcessor(new PayPalGateway());
+        paypalProcessor.Pay(100);
+
+        var stripeProcessor = new PaymentProcessor(new StripeGateway());
+        stripeProcessor.Pay(200);
     }
 }

@@ -89,4 +89,4 @@ Now, `ReportGenerator` depends on the abstraction (`ILogger`), not the concrete 
 
 ## Summary
 
-The Dependency Inversion Principle encourages you to depend on abstractions rather than concrete implementations. This leads to more
+The Dependency Inversion Principle encourages you to depend on abstractions rather than concrete implementations. This leads to more maintainable and flexible code.
