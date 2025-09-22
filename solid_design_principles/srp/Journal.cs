@@ -16,6 +16,11 @@ namespace solid_design_principles.srp
             entries.Remove(text);
         }
 
+        public void Clear()
+        {
+            entries.Clear();
+        }
+
         public override string ToString()
         {
             return string.Join(Environment.NewLine, entries);
